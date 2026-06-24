@@ -1,0 +1,14 @@
+{
+  "name": "multi-account-preview",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Multi-account cookie canvas browser shell",
+  "main": "main.js",
+  "scripts": {
+    "prestart": "node scripts/ensure-electron.js",
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "electron": "^33.4.11"
+  }
+}

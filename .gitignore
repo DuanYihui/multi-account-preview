@@ -1,0 +1,47 @@
+# Dependencies
+node_modules/
+desktop-shell/node_modules/
+
+# Runtime logs and process files
+*.log
+*.pid
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local account config, cookies and Electron browser state
+accounts.tsv
+.account-preview-workbench/
+account-preview-workbench/
+electron-shell/
+desktop-shell/electron-shell/
+desktop-shell/userData/
+desktop-shell/Default/
+desktop-shell/Cookies
+desktop-shell/Cookies-journal
+desktop-shell/Local Storage/
+desktop-shell/Session Storage/
+desktop-shell/IndexedDB/
+desktop-shell/Cache/
+desktop-shell/Code Cache/
+*.local.tsv
+*.cookies
+*.cookie
+
+# Build outputs
+dist/
+build/
+out/
+release/
+*.dmg
+*.zip
+*.app/
+
+# Local editor and OS files
+.DS_Store
+.idea/
+.vscode/
+
+# Local runtime data normally lives outside this repo:
+# ~/.account-preview-workbench/
+# ~/.redis-code-menubar.json

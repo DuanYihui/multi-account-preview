@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>多套账号预览工作台</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #18201f;
+      --muted: #64706d;
+      --line: #d6ddd8;
+      --paper: #f7f5ee;
+      --panel: #ffffff;
+      --green: #11624f;
+      --mint: #d9eee7;
+      --amber: #e5a72f;
+      --red: #b84a3b;
+      --shadow: 0 18px 48px rgba(21, 42, 35, .12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background:
+        linear-gradient(135deg, rgba(17, 98, 79, .09), transparent 30%),
+        linear-gradient(315deg, rgba(229, 167, 47, .12), transparent 34%),
+        var(--paper);
+      color: var(--ink);
+      font-family: "Avenir Next", "PingFang SC", "Hiragino Sans GB", sans-serif;
+      min-height: 100vh;
+    }
+
+    main {
+      width: min(1180px, calc(100vw - 36px));
+      margin: 0 auto;
+      padding: 38px 0 48px;
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 28px;
+      align-items: end;
+      border-bottom: 1px solid rgba(24, 32, 31, .18);
+      padding-bottom: 26px;
+    }
+
+    h1 {
+      font-size: clamp(34px, 5vw, 64px);
+      line-height: .96;
+      letter-spacing: 0;
+      margin: 0 0 18px;
+      max-width: 780px;
+    }
+
+    .lead {
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.7;
+      margin: 0;
+      max-width: 760px;
+    }
+
+    .quick-card,
+    .panel,
+    .account-card {
+      background: rgba(255, 255, 255, .88);
+      border: 1px solid rgba(24, 32, 31, .13);
+      box-shadow: var(--shadow);
+    }
+
+    .quick-card {
+      border-radius: 8px;
+      padding: 18px;
+    }
+
+    .quick-card strong {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 12px;
+    }
+
+    code,
+    textarea,
+    input {
+      font-family: "SFMono-Regular", Consolas, monospace;
+    }
+
+    code {
+      display: block;
+      background: #15241f;
+      color: #dff4eb;
+      padding: 12px 13px;
+      border-radius: 6px;
+      overflow-x: auto;
+      line-height: 1.45;
+      font-size: 13px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: .92fr 1.08fr;
+      gap: 22px;
+      margin-top: 24px;
+      align-items: start;
+    }
+
+    .panel {
+      border-radius: 8px;
+      padding: 20px;
+    }
+
+    .panel h2 {
+      margin: 0 0 14px;
+      font-size: 18px;
+    }
+
+    .panel p {
+      color: var(--muted);
+      line-height: 1.65;
+      margin: 0 0 14px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 210px;
+      resize: vertical;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 12px;
+      line-height: 1.5;
+      font-size: 13px;
+      color: var(--ink);
+      background: #fffdfa;
+      outline-color: var(--green);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 14px 0 0;
+    }
+
+    button {
+      border: 1px solid rgba(24, 32, 31, .14);
+      background: var(--green);
+      color: white;
+      border-radius: 6px;
+      min-height: 40px;
+      padding: 0 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button.secondary {
+      background: #fff;
+      color: var(--ink);
+    }
+
+    button:focus-visible,
+    a:focus-visible {
+      outline: 3px solid rgba(229, 167, 47, .5);
+      outline-offset: 2px;
+    }
+
+    .hint {
+      display: grid;
+      grid-template-columns: 12px 1fr;
+      gap: 10px;
+      padding: 12px 0;
+      border-top: 1px solid rgba(24, 32, 31, .11);
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      background: var(--amber);
+      border-radius: 99px;
+      margin-top: 8px;
+    }
+
+    .preview-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .account-card {
+      border-radius: 8px;
+      padding: 14px;
+      min-height: 126px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .account-card.off {
+      opacity: .56;
+    }
+
+    .account-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .account-name {
+      font-weight: 800;
+      overflow-wrap: anywhere;
+    }
+
+    .badge {
+      border-radius: 999px;
+      padding: 4px 9px;
+      font-size: 12px;
+      font-weight: 800;
+      background: var(--mint);
+      color: var(--green);
+      white-space: nowrap;
+    }
+
+    .off .badge {
+      background: #f1e3df;
+      color: var(--red);
+    }
+
+    .account-url {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+
+    .window-meta {
+      color: var(--ink);
+      font-size: 12px;
+      background: #f0f4f1;
+      border-radius: 6px;
+      padding: 8px;
+    }
+
+    .copy-state {
+      color: var(--green);
+      min-height: 22px;
+      font-size: 13px;
+      margin-top: 8px;
+    }
+
+    @media (max-width: 880px) {
+      header,
+      .grid,
+      .preview-grid {
+        grid-template-columns: 1fr;
+      }
+
+      main {
+        width: min(100vw - 24px, 1180px);
+        padding-top: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <section>
+        <h1>多套账号预览工作台</h1>
+        <p class="lead">每个环境账号共用一个独立 Chrome profile。同一账号里的移动端和 Web 端共享 Cookie；不同账号之间互相隔离。</p>
+      </section>
+      <aside class="quick-card">
+        <strong>最短启动命令</strong>
+        <code>tools/multi-account-preview/preview-accounts.sh init
+tools/multi-account-preview/preview-accounts.sh start</code>
+      </aside>
+    </header>
+
+    <section class="grid">
+      <div class="panel">
+        <h2>怎么用</h2>
+        <div class="hint">
+          <span class="dot"></span>
+          <p>先执行 <b>init</b>，它会生成账号菜单：<br><code>~/.account-preview-workbench/accounts.tsv</code></p>
+        </div>
+        <div class="hint">
+          <span class="dot"></span>
+        <p>把环境、账号、页面名、页面地址和窗口位置填进去。同一个环境账号会共用同一份 Cookie。</p>
+        </div>
+        <div class="hint">
+          <span class="dot"></span>
+        <p>执行 <b>start</b>。第一次在某个账号的移动端登录后，同账号 Web 端就能按浏览器规则读取可共享的 Cookie。</p>
+        </div>
+        <div class="actions">
+          <button id="copyInit">复制初始化命令</button>
+          <button class="secondary" id="copyStart">复制启动命令</button>
+        </div>
+        <p class="copy-state" id="copyState"></p>
+      </div>
+
+      <div class="panel">
+        <h2>账号菜单预览</h2>
+        <p>这里可以先排一下窗口。最后一列 <code>profileKey</code> 是账号内部编号，账号改名时不要跟着改它，这样登录态不会丢。</p>
+        <textarea id="configInput" spellcheck="false"># enabled	env	account	page	url	x	y	width	height	profileKey
+yes	测试环境	默认账号	移动端	https://m.example.com	40	80	375	667	测试环境:默认账号
+yes	测试环境	默认账号	后台	https://admin.example.com	500	80	1440	820	测试环境:默认账号
+no	测试环境	默认账号	收银台	https://cashier.example.com	1980	80	1440	820	测试环境:默认账号</textarea>
+        <div class="actions">
+          <button id="renderConfig">刷新预览</button>
+          <button class="secondary" id="copyConfig">复制账号菜单</button>
+        </div>
+        <div class="preview-grid" id="cards"></div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const configInput = document.querySelector('#configInput');
+    const cards = document.querySelector('#cards');
+    const copyState = document.querySelector('#copyState');
+
+    const commands = {
+      init: 'tools/multi-account-preview/preview-accounts.sh init',
+      start: 'tools/multi-account-preview/preview-accounts.sh start'
+    };
+
+    function parseConfig(text) {
+      return text.split(/\n+/)
+        .map((line) => line.trim())
+        .filter((line) => line && !line.startsWith('#'))
+        .map((line) => {
+          const parts = line.split('\t');
+          if (parts.length >= 9) {
+            const [enabled, env, account, page, url, x, y, width, height, profileKey] = parts;
+            return { enabled, env, account, page, url, x, y, width, height, profileKey: profileKey || `${env}:${account}` };
+          }
+          const [enabled, suite, page, url, x, y, width, height] = parts;
+          return { enabled, env: suite, account: '默认账号', page, url, x, y, width, height, profileKey: `${suite}:默认账号` };
+        })
+        .filter((item) => item.env && item.account && item.page && item.url);
+    }
+
+    function render() {
+      const accounts = parseConfig(configInput.value);
+      cards.innerHTML = accounts.map((account) => {
+        const isOn = account.enabled === 'yes';
+        return `
+          <article class="account-card ${isOn ? '' : 'off'}">
+            <div class="account-top">
+              <span class="account-name">${escapeHtml(account.env)} / ${escapeHtml(account.account)} · ${escapeHtml(account.page)}</span>
+              <span class="badge">${isOn ? '启用' : '停用'}</span>
+            </div>
+            <div class="account-url">${escapeHtml(account.url)}</div>
+            <div class="window-meta">位置 ${escapeHtml(account.x)},${escapeHtml(account.y)} · 尺寸 ${escapeHtml(account.width)} × ${escapeHtml(account.height)}</div>
+            <div class="window-meta">内部编号 ${escapeHtml(account.profileKey)}</div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    async function copyText(text, label) {
+      await navigator.clipboard.writeText(text);
+      copyState.textContent = `${label}已复制`;
+      window.setTimeout(() => {
+        copyState.textContent = '';
+      }, 1800);
+    }
+
+    document.querySelector('#copyInit').addEventListener('click', () => copyText(commands.init, '初始化命令'));
+    document.querySelector('#copyStart').addEventListener('click', () => copyText(commands.start, '启动命令'));
+    document.querySelector('#copyConfig').addEventListener('click', () => copyText(configInput.value, '账号菜单'));
+    document.querySelector('#renderConfig').addEventListener('click', render);
+    render();
+  </script>
+</body>
+</html>

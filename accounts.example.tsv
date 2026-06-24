@@ -1,0 +1,4 @@
+# enabled	env	account	page	url	x	y	width	height	profileKey	userAgent	deviceScaleFactor	mobileEmulation
+yes	测试环境	默认账号	移动端	https://m.example.com	40	80	375	812	测试环境:默认账号			yes
+yes	测试环境	默认账号	后台	https://admin.example.com	500	80	1440	820	测试环境:默认账号			no
+no	测试环境	默认账号	收银台	https://cashier.example.com	1980	80	1440	820	测试环境:默认账号			no

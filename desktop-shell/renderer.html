@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Multi Account Preview</title>
+  <link rel="stylesheet" href="./renderer.css">
+</head>
+<body class="theme-dark">
+  <aside class="side">
+    <div class="brand">
+      <span class="mark">森</span>
+      <div>
+        <h1>Cookie Canvas</h1>
+        <p>四套环境，一张画布</p>
+      </div>
+      <button id="toggleSidebar" class="side-toggle" title="收起侧栏">‹</button>
+    </div>
+
+    <div class="side-content">
+    <section>
+      <h2>环境</h2>
+      <div id="suiteList" class="suite-list"></div>
+      <div class="env-actions">
+        <button id="addEnv" class="add-account" title="复制当前环境窗口配置，创建新环境">+ 新增环境</button>
+      </div>
+    </section>
+
+    <section>
+      <h2>账号</h2>
+      <div id="accountList" class="account-list"></div>
+      <button id="addAccount" class="add-account" title="新增当前环境下的账号">+ 新增账号</button>
+    </section>
+
+    <section>
+      <h2>当前窗口</h2>
+      <div id="codeHelper" class="code-helper"></div>
+      <div id="pageList" class="page-list"></div>
+    </section>
+
+    <section class="note">
+      <p>同一个环境账号里的移动端、后台、收银台共用一份浏览器存储；不同账号互相隔离。</p>
+      <p id="configFile"></p>
+    </section>
+    </div>
+  </aside>
+
+  <main class="stage">
+    <header class="toolbar">
+      <div>
+        <strong id="currentTitle">测试环境</strong>
+        <span id="currentMode">总览</span>
+      </div>
+      <div class="tool-actions">
+        <button id="back" title="后退">‹</button>
+        <button id="forward" title="前进">›</button>
+        <button id="reload" title="刷新">↻</button>
+        <button id="home" title="回到初始地址">⌂</button>
+        <button id="overview" title="回到总览">总览</button>
+        <button id="themeToggle" title="切换明暗模式">暗</button>
+        <button id="zoomOut" title="缩小">−</button>
+        <div id="zoomPicker" class="zoom-picker">
+          <input id="zoomLevel" class="zoom-level" value="100%" inputmode="numeric" title="输入缩放比例" aria-label="缩放比例">
+          <button id="zoomMenuToggle" class="zoom-menu-toggle" title="选择缩放比例" aria-label="选择缩放比例">▾</button>
+        </div>
+        <button id="zoomIn" title="放大">+</button>
+        <button id="devtools" title="打开开发者工具">Dev</button>
+      </div>
+    </header>
+
+    <section class="canvas-shell">
+      <div id="canvasSurface" class="canvas-surface">
+        <div id="previewFrames" class="preview-frames"></div>
+        <div id="devtoolsResizer" class="devtools-resizer" hidden title="拖拽调整开发者工具宽度"></div>
+        <div class="crosshair"></div>
+        <div class="canvas-tip">点击左侧窗口名，或直接点预览画面进入大预览。空白处拖拽移动画布，滚轮缩放。</div>
+      </div>
+    </section>
+  </main>
+
+  <div id="envSettings" class="modal-backdrop" hidden>
+    <form id="envSettingsForm" class="modal-panel">
+      <header class="modal-head">
+        <div>
+          <strong>环境设置</strong>
+          <span>填写真实项目地址；移动端预览比例可在左侧窗口卡片直接调整</span>
+        </div>
+        <button id="closeEnvSettings" type="button" title="关闭">×</button>
+      </header>
+      <label class="field">
+        <span>环境名称</span>
+        <input id="envNameInput" name="envName" autocomplete="off">
+      </label>
+      <div class="env-page-editor">
+        <div class="env-page-editor-head">
+          <span>窗口</span>
+          <span>地址</span>
+          <span>移动设备模拟</span>
+          <span>启用</span>
+        </div>
+        <div id="envPageRows"></div>
+      </div>
+      <footer class="modal-actions">
+        <button id="deleteEnv" type="button" class="danger">删除环境</button>
+        <span></span>
+        <button type="button" id="cancelEnvSettings">取消</button>
+        <button type="submit" class="primary">保存</button>
+      </footer>
+    </form>
+  </div>
+
+  <script src="./renderer.js"></script>
+</body>
+</html>
