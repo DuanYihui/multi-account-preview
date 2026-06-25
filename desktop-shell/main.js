@@ -26,7 +26,8 @@ const shellState = {
   statuses: {},
   popupPages: {},
   viewFrames: [],
-  settingsOpen: false
+  settingsOpen: false,
+  previewFullscreen: false
 };
 
 let mainWindow;
@@ -1775,7 +1776,7 @@ function layoutViews() {
     const focusedPage = pages.find((page) => page.page === shellState.focusedPage);
     const focusIsMobile = isMobilePage(focusedPage);
     const focusedPageZoom = getPageZoom(focusedPage.page);
-    const sideWidth = focusIsMobile && pages.length > 1 ? 300 : 0;
+    const sideWidth = !shellState.previewFullscreen && focusIsMobile && pages.length > 1 ? 300 : 0;
     const focusArea = {
       x: rect.x,
       y: rect.y,
@@ -1784,16 +1785,20 @@ function layoutViews() {
     };
     const focusedViewport = pageViewport(focusedPage);
     const focusedFit = aspectFit(focusedViewport, focusArea);
-    const focusedZoom = focusIsMobile
-      ? Math.max(0.35, Math.min(2.4, focusedPageZoom))
-      : Math.max(0.25, Math.min(1.6, focusedFit.scale * focusedPageZoom));
-    const focusedBounds = clampBoundsToArea({
-      ...focusedFit,
-      width: focusedViewport.width * focusedZoom,
-      height: focusedViewport.height * focusedZoom,
-      x: focusArea.x + (focusArea.width - focusedViewport.width * focusedZoom) / 2,
-      y: focusArea.y + (focusArea.height - focusedViewport.height * focusedZoom) / 2
-    }, focusArea);
+    const focusedZoom = shellState.previewFullscreen && !focusIsMobile
+      ? Math.max(0.25, Math.min(1.8, focusedPageZoom))
+      : focusIsMobile
+      ? Math.max(0.25, Math.min(3.2, focusedFit.scale * focusedPageZoom))
+      : Math.max(0.25, Math.min(1.8, focusedFit.scale * focusedPageZoom));
+    const focusedBounds = shellState.previewFullscreen && !focusIsMobile
+      ? { ...focusArea, scale: focusedZoom }
+      : clampBoundsToArea({
+        ...focusedFit,
+        width: focusedViewport.width * focusedZoom,
+        height: focusedViewport.height * focusedZoom,
+        x: focusArea.x + (focusArea.width - focusedViewport.width * focusedZoom) / 2,
+        y: focusArea.y + (focusArea.height - focusedViewport.height * focusedZoom) / 2
+      }, focusArea);
 
     for (const page of pages) {
       const view = views.get(viewCacheKey(account, page.page));
@@ -2076,6 +2081,7 @@ function emitState() {
     viewFrames: shellState.viewFrames,
     devtoolsFrame: embeddedDevtoolsView ? roundBounds(devtoolsRect()) : null,
     settingsOpen: shellState.settingsOpen,
+    previewFullscreen: shellState.previewFullscreen,
     configFile
   });
 }
@@ -2277,6 +2283,13 @@ ipcMain.handle('toggle-sidebar', () => {
   layoutViews();
   emitState();
   return shellState.sidebarCollapsed;
+});
+
+ipcMain.handle('preview-fullscreen', (_event, fullscreen) => {
+  shellState.previewFullscreen = Boolean(fullscreen);
+  layoutViews();
+  emitState();
+  return shellState.previewFullscreen;
 });
 
 ipcMain.handle('canvas-camera', (_event, camera) => {

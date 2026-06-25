@@ -678,6 +678,11 @@ h2 {
   backdrop-filter: blur(12px);
 }
 
+body.preview-fullscreen .canvas-tip,
+body.preview-fullscreen .crosshair {
+  display: none;
+}
+
 body.sidebar-collapsed .side {
   width: var(--sidebar-collapsed-width);
   padding: 12px 8px;

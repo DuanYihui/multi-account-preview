@@ -26,6 +26,7 @@ contextBridge.exposeInMainWorld('accountPreviewShell', {
   closePopupPage: (page) => ipcRenderer.invoke('close-popup-page', page),
   overview: () => ipcRenderer.invoke('overview'),
   toggleSidebar: () => ipcRenderer.invoke('toggle-sidebar'),
+  setPreviewFullscreen: (fullscreen) => ipcRenderer.invoke('preview-fullscreen', fullscreen),
   setCamera: (camera) => ipcRenderer.invoke('canvas-camera', camera),
   setDevtoolsWidth: (width) => ipcRenderer.invoke('devtools-width', width),
   showZoomMenu: () => ipcRenderer.invoke('show-zoom-menu'),

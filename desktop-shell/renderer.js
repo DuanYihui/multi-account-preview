@@ -25,6 +25,7 @@ const zoomLevel = document.querySelector('#zoomLevel');
 const zoomPicker = document.querySelector('#zoomPicker');
 const zoomMenuToggle = document.querySelector('#zoomMenuToggle');
 const toggleSidebar = document.querySelector('#toggleSidebar');
+const previewFullscreenButton = document.querySelector('#previewFullscreen');
 const themeToggle = document.querySelector('#themeToggle');
 const envSettings = document.querySelector('#envSettings');
 const envSettingsForm = document.querySelector('#envSettingsForm');
@@ -62,8 +63,11 @@ function render() {
   const selectedAccount = selectedEnv?.accounts?.find((account) => account.account === state.selectedAccount) || selectedEnv?.accounts?.[0];
   const zoomPercent = Math.round((camera.zoom || 1) * 100);
   document.body.classList.toggle('sidebar-collapsed', Boolean(state.sidebarCollapsed));
+  document.body.classList.toggle('preview-fullscreen', Boolean(state.previewFullscreen));
   toggleSidebar.textContent = state.sidebarCollapsed ? '›' : '‹';
   toggleSidebar.title = state.sidebarCollapsed ? '展开侧栏' : '收起侧栏';
+  previewFullscreenButton.textContent = state.previewFullscreen ? '退出' : '全屏';
+  previewFullscreenButton.title = state.previewFullscreen ? '退出右侧画布全屏' : '当前预览铺满右侧画布';
   updateThemeButton();
   currentTitle.textContent = selectedEnv && selectedAccount ? `${selectedEnv.env} · ${selectedAccount.account}` : '未选择';
   currentMode.textContent = state.mode === 'focus' ? `大预览：${state.focusedPage || ''} · ${zoomPercent}%` : `总览 · ${zoomPercent}%`;
@@ -470,6 +474,7 @@ document.querySelector('#home').addEventListener('click', () => window.accountPr
 document.querySelector('#overview').addEventListener('click', () => window.accountPreviewShell.overview());
 document.querySelector('#devtools').addEventListener('click', () => window.accountPreviewShell.nav('devtools'));
 toggleSidebar.addEventListener('click', () => window.accountPreviewShell.toggleSidebar());
+previewFullscreenButton.addEventListener('click', () => setPreviewFullscreen(!state?.previewFullscreen));
 addAccountButton.addEventListener('click', startAddAccount);
 addEnvButton.addEventListener('click', addEnvironment);
 closeEnvSettings.addEventListener('click', closeEnvironmentSettings);
@@ -745,6 +750,10 @@ function setZoom(zoom) {
   window.accountPreviewShell.setCamera(camera);
 }
 
+function setPreviewFullscreen(fullscreen) {
+  window.accountPreviewShell.setPreviewFullscreen(Boolean(fullscreen));
+}
+
 function commitZoomInput() {
   const zoom = parseZoomInput(zoomLevel.value);
   if (!zoom) {
@@ -809,6 +818,10 @@ canvasSurface.addEventListener('pointerup', (event) => {
 });
 
 window.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && state?.previewFullscreen) {
+    setPreviewFullscreen(false);
+    return;
+  }
   if (event.key === 'Escape') window.accountPreviewShell.overview();
   if ((event.metaKey || event.ctrlKey) && ['1', '2', '3', '4'].includes(event.key)) {
     const index = Number(event.key) - 1;
