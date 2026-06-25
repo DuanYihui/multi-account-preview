@@ -1785,10 +1785,11 @@ function layoutViews() {
     };
     const focusedViewport = pageViewport(focusedPage);
     const focusedFit = aspectFit(focusedViewport, focusArea);
+    const mobileFitZoom = Math.max(0.25, Math.min(3.2, focusedFit.scale));
     const focusedZoom = shellState.previewFullscreen && !focusIsMobile
       ? Math.max(0.25, Math.min(1.8, focusedPageZoom))
       : focusIsMobile
-      ? Math.max(0.25, Math.min(3.2, focusedFit.scale * focusedPageZoom))
+      ? Math.max(0.25, Math.min(mobileFitZoom, focusedFit.scale * focusedPageZoom))
       : Math.max(0.25, Math.min(1.8, focusedFit.scale * focusedPageZoom));
     const focusedBounds = shellState.previewFullscreen && !focusIsMobile
       ? { ...focusArea, scale: focusedZoom }
