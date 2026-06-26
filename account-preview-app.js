@@ -19,23 +19,24 @@ function ensureState() {
 
 function defaultConfig() {
   return [
-    '# enabled\tenv\taccount\tpage\turl\tx\ty\twidth\theight\tprofileKey',
-    'yes\t测试环境\t默认账号\t移动端\thttps://m.example.com\t40\t80\t375\t667\t测试环境:默认账号',
-    'yes\t测试环境\t默认账号\tWeb端\thttps://admin.example.com\t500\t80\t1440\t820\t测试环境:默认账号',
+    '# enabled\tenv\taccount\tpage\turl\tx\ty\twidth\theight\tprofileKey\tuserAgent\tdeviceScaleFactor\tmobileEmulation',
+    'yes\t测试环境\t默认账号\t移动端\thttps://m.example.com\t40\t80\t375\t812\t测试环境:默认账号\t\t\tyes',
+    'yes\t测试环境\t默认账号\t后台\thttps://admin.example.com\t500\t80\t1440\t820\t测试环境:默认账号\t\t\tno',
+    'no\t测试环境\t默认账号\t收银台\thttps://cashier.example.com\t1980\t80\t1440\t820\t测试环境:默认账号\t\t\tno',
     ''
   ].join('\n');
 }
 
 function samplePresetConfig() {
   return [
-    '# enabled\tenv\taccount\tpage\turl\tx\ty\twidth\theight\tprofileKey',
-    'yes\t生产示例\t默认账号\t移动端\thttps://m.example.com/easy/\t40\t80\t375\t667\t生产示例:默认账号',
-    'yes\t生产示例\t默认账号\t后台\thttps://admin.example.com/manage/\t500\t80\t1440\t820\t生产示例:默认账号',
-    'yes\t生产示例\t默认账号\t收银台\thttps://cashier.example.com/\t1980\t80\t1440\t820\t生产示例:默认账号',
-    'yes\t测试示例\t默认账号\t移动端\thttps://test-m.example.com/easy/\t40\t940\t375\t667\t测试示例:默认账号',
-    'yes\t测试示例\t默认账号\t后台\thttps://test-admin.example.com/manage/\t500\t940\t1440\t820\t测试示例:默认账号',
-    'yes\t本地示例\t默认账号\t移动端\thttp://localhost:3009/easy/\t40\t1800\t375\t667\t本地示例:默认账号',
-    'yes\t本地示例\t默认账号\t后台\thttp://localhost:3000/manage/\t500\t1800\t1440\t820\t本地示例:默认账号',
+    '# enabled\tenv\taccount\tpage\turl\tx\ty\twidth\theight\tprofileKey\tuserAgent\tdeviceScaleFactor\tmobileEmulation',
+    'yes\t生产示例\t默认账号\t移动端\thttps://m.example.com/easy/\t40\t80\t375\t812\t生产示例:默认账号\t\t\tyes',
+    'yes\t生产示例\t默认账号\t后台\thttps://admin.example.com/manage/\t500\t80\t1440\t820\t生产示例:默认账号\t\t\tno',
+    'yes\t生产示例\t默认账号\t收银台\thttps://cashier.example.com/\t1980\t80\t1440\t820\t生产示例:默认账号\t\t\tno',
+    'yes\t测试示例\t默认账号\t移动端\thttps://test-m.example.com/easy/\t40\t940\t375\t812\t测试示例:默认账号\t\t\tyes',
+    'yes\t测试示例\t默认账号\t后台\thttps://test-admin.example.com/manage/\t500\t940\t1440\t820\t测试示例:默认账号\t\t\tno',
+    'yes\t本地示例\t默认账号\t移动端\thttp://localhost:3009/easy/\t40\t1800\t375\t812\t本地示例:默认账号\t\t\tyes',
+    'yes\t本地示例\t默认账号\t后台\thttp://localhost:3000/manage/\t500\t1800\t1440\t820\t本地示例:默认账号\t\t\tno',
     ''
   ].join('\n');
 }

@@ -305,10 +305,10 @@ tools/multi-account-preview/preview-accounts.sh start</code>
       <div class="panel">
         <h2>账号菜单预览</h2>
         <p>这里可以先排一下窗口。最后一列 <code>profileKey</code> 是账号内部编号，账号改名时不要跟着改它，这样登录态不会丢。</p>
-        <textarea id="configInput" spellcheck="false"># enabled	env	account	page	url	x	y	width	height	profileKey
-yes	测试环境	默认账号	移动端	https://m.example.com	40	80	375	667	测试环境:默认账号
-yes	测试环境	默认账号	后台	https://admin.example.com	500	80	1440	820	测试环境:默认账号
-no	测试环境	默认账号	收银台	https://cashier.example.com	1980	80	1440	820	测试环境:默认账号</textarea>
+        <textarea id="configInput" spellcheck="false"># enabled	env	account	page	url	x	y	width	height	profileKey	userAgent	deviceScaleFactor	mobileEmulation
+yes	测试环境	默认账号	移动端	https://m.example.com	40	80	375	812	测试环境:默认账号			yes
+yes	测试环境	默认账号	后台	https://admin.example.com	500	80	1440	820	测试环境:默认账号			no
+no	测试环境	默认账号	收银台	https://cashier.example.com	1980	80	1440	820	测试环境:默认账号			no</textarea>
         <div class="actions">
           <button id="renderConfig">刷新预览</button>
           <button class="secondary" id="copyConfig">复制账号菜单</button>

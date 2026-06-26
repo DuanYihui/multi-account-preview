@@ -74,23 +74,24 @@ init_config() {
   fi
 
   cat > "$CONFIG_FILE" <<'EOF'
-# enabled	env	account	page	url	x	y	width	height	profileKey	userAgent	deviceScaleFactor
-yes	测试环境	默认账号	移动端	https://m.example.com	40	80	375	812	测试环境:默认账号		2
-yes	测试环境	默认账号	Web端	https://example.com	500	80	980	820	测试环境:默认账号		
+# enabled	env	account	page	url	x	y	width	height	profileKey	userAgent	deviceScaleFactor	mobileEmulation
+yes	测试环境	默认账号	移动端	https://m.example.com	40	80	375	812	测试环境:默认账号			yes
+yes	测试环境	默认账号	后台	https://admin.example.com	500	80	1440	820	测试环境:默认账号			no
+no	测试环境	默认账号	收银台	https://cashier.example.com	1980	80	1440	820	测试环境:默认账号			no
 EOF
   echo "Created: $CONFIG_FILE"
 }
 
 sample_config() {
   cat <<'EOF'
-# enabled	env	account	page	url	x	y	width	height	profileKey	userAgent	deviceScaleFactor
-yes	生产示例	默认账号	移动端	https://m.example.com/easy/	40	80	375	812	生产示例:默认账号		2
-yes	生产示例	默认账号	后台	https://admin.example.com/manage/	500	80	1440	820	生产示例:默认账号		
-yes	生产示例	默认账号	收银台	https://cashier.example.com/	1980	80	1440	820	生产示例:默认账号		
-yes	测试示例	默认账号	移动端	https://test-m.example.com/easy/	40	940	375	812	测试示例:默认账号		2
-yes	测试示例	默认账号	后台	https://test-admin.example.com/manage/	500	940	1440	820	测试示例:默认账号		
-yes	本地示例	默认账号	移动端	http://localhost:3009/easy/	40	1800	375	812	本地示例:默认账号		2
-yes	本地示例	默认账号	后台	http://localhost:3000/manage/	500	1800	1440	820	本地示例:默认账号		
+# enabled	env	account	page	url	x	y	width	height	profileKey	userAgent	deviceScaleFactor	mobileEmulation
+yes	生产示例	默认账号	移动端	https://m.example.com/easy/	40	80	375	812	生产示例:默认账号			yes
+yes	生产示例	默认账号	后台	https://admin.example.com/manage/	500	80	1440	820	生产示例:默认账号			no
+yes	生产示例	默认账号	收银台	https://cashier.example.com/	1980	80	1440	820	生产示例:默认账号			no
+yes	测试示例	默认账号	移动端	https://test-m.example.com/easy/	40	940	375	812	测试示例:默认账号			yes
+yes	测试示例	默认账号	后台	https://test-admin.example.com/manage/	500	940	1440	820	测试示例:默认账号			no
+yes	本地示例	默认账号	移动端	http://localhost:3009/easy/	40	1800	375	812	本地示例:默认账号			yes
+yes	本地示例	默认账号	后台	http://localhost:3000/manage/	500	1800	1440	820	本地示例:默认账号			no
 EOF
 }
 

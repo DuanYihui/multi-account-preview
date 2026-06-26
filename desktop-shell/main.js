@@ -73,10 +73,10 @@ function sidebarWidth() {
 
 function defaultConfig() {
   return [
-    '# enabled\tenv\taccount\tpage\turl\tx\ty\twidth\theight\tprofileKey\tuserAgent\tdeviceScaleFactor',
-    'yes\t测试环境\t默认账号\t移动端\thttps://m.example.com\t40\t80\t375\t812\t测试环境:默认账号\t\t2',
-    'yes\t测试环境\t默认账号\t后台\thttps://admin.example.com\t500\t80\t1440\t820\t测试环境:默认账号\t\t',
-    'no\t测试环境\t默认账号\t收银台\thttps://cashier.example.com\t1980\t80\t1440\t820\t测试环境:默认账号\t\t',
+    '# enabled\tenv\taccount\tpage\turl\tx\ty\twidth\theight\tprofileKey\tuserAgent\tdeviceScaleFactor\tmobileEmulation',
+    'yes\t测试环境\t默认账号\t移动端\thttps://m.example.com\t40\t80\t375\t812\t测试环境:默认账号\t\t\tyes',
+    'yes\t测试环境\t默认账号\t后台\thttps://admin.example.com\t500\t80\t1440\t820\t测试环境:默认账号\t\t\tno',
+    'no\t测试环境\t默认账号\t收银台\thttps://cashier.example.com\t1980\t80\t1440\t820\t测试环境:默认账号\t\t\tno',
     ''
   ].join('\n');
 }
@@ -374,11 +374,12 @@ function updateEnvironment(payload = {}) {
   }
 
   const pageUpdates = new Map();
-  for (const page of payload.pages || []) {
+  const submittedPages = Array.isArray(payload.pages) ? payload.pages : [];
+  if (!submittedPages.length) throw new Error('环境至少需要保留 1 个窗口');
+  for (const page of submittedPages) {
     const originalPage = normalizeLabel(page.originalPage);
     const nextPage = normalizeLabel(page.page);
     let nextUrl = '';
-    if (!originalPage) continue;
     if (!nextPage) throw new Error('窗口名称不能为空');
     try {
       nextUrl = normalizeEditableUrl(page.url);
@@ -398,7 +399,7 @@ function updateEnvironment(payload = {}) {
     if (Object.prototype.hasOwnProperty.call(page, 'deviceScaleFactor')) {
       nextUpdate.deviceScaleFactor = normalizeDeviceScaleFactor(page.deviceScaleFactor);
     }
-    pageUpdates.set(originalPage, nextUpdate);
+    pageUpdates.set(originalPage || `__new_${pageUpdates.size}`, nextUpdate);
   }
 
   const nextPageNames = Array.from(pageUpdates.values()).map((page) => page.page);
@@ -409,20 +410,35 @@ function updateEnvironment(payload = {}) {
   saveCurrentViewState();
   for (const account of env.accounts) destroyAccountViews(account);
 
-  const rows = readConfigRows().map((row) => {
-    if (row.env !== oldName) return row;
-    const update = pageUpdates.get(row.page);
-    return {
-      ...row,
-      env: cleanName,
-      page: update?.page || row.page,
-      url: update?.url || row.url,
-      enabled: update ? update.enabled : row.enabled,
-      mobileEmulation: update ? update.mobileEmulation : row.mobileEmulation,
-      userAgent: update && update.userAgent !== undefined && update.mobileEmulation ? update.userAgent : row.userAgent,
-      deviceScaleFactor: update && update.deviceScaleFactor !== undefined && update.mobileEmulation ? update.deviceScaleFactor : row.deviceScaleFactor
-    };
-  });
+  const existingRows = readConfigRows();
+  const untouchedRows = existingRows.filter((row) => row.env !== oldName);
+  const envRows = existingRows.filter((row) => row.env === oldName);
+  const accountNames = Array.from(new Set(envRows.map((row) => row.account || '默认账号')));
+  const rows = [...untouchedRows];
+  for (const accountName of accountNames) {
+    const accountRows = envRows.filter((row) => (row.account || '默认账号') === accountName);
+    const fallbackProfileKey = accountRows[0]?.profileKey || `${cleanName}:${accountName}`;
+    Array.from(pageUpdates.entries()).forEach(([originalPage, update], index) => {
+      const previous = accountRows.find((row) => row.page === originalPage);
+      const mobile = update.mobileEmulation;
+      rows.push({
+        ...(previous || {}),
+        enabled: update.enabled,
+        env: cleanName,
+        account: accountName,
+        page: update.page,
+        url: update.url,
+        x: previous?.x ?? (mobile ? 0 : index * 40),
+        y: previous?.y ?? (mobile ? 0 : index * 40),
+        width: previous?.width ?? (mobile ? MOBILE_VIEWPORT.width : DESKTOP_VIEWPORT.width),
+        height: previous?.height ?? (mobile ? MOBILE_VIEWPORT.height : DESKTOP_VIEWPORT.height),
+        profileKey: previous?.profileKey || fallbackProfileKey,
+        userAgent: mobile ? (update.userAgent !== undefined ? update.userAgent : previous?.userAgent) : '',
+        deviceScaleFactor: mobile ? (update.deviceScaleFactor !== undefined ? update.deviceScaleFactor : previous?.deviceScaleFactor) : '',
+        mobileEmulation: mobile
+      });
+    });
+  }
   writeConfigRows(rows);
   refreshEnvironments(cleanName, shellState.selectedAccount);
   shellState.focusedPage = '';

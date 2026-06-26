@@ -627,7 +627,7 @@ h2 {
 .env-page-editor-head,
 .env-page-row {
   display: grid;
-  grid-template-columns: 160px minmax(0, 1fr) 98px 56px;
+  grid-template-columns: 160px minmax(0, 1fr) 98px 56px 40px;
   gap: 8px;
   align-items: center;
 }
@@ -648,6 +648,46 @@ h2 {
   width: 20px;
   height: 20px;
   accent-color: var(--green);
+}
+
+.env-page-delete {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--border-soft);
+  border-radius: 7px;
+  background: var(--control-muted);
+  color: var(--red);
+  font-family: inherit;
+  font-size: 18px;
+  font-weight: 850;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.env-page-delete:hover {
+  border-color: var(--red);
+  background: color-mix(in srgb, var(--red) 10%, var(--control-muted));
+}
+
+.env-page-add {
+  justify-self: start;
+  height: 34px;
+  border: 1px dashed var(--line);
+  border-radius: 7px;
+  padding: 0 12px;
+  background: transparent;
+  color: var(--green);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.env-page-add:hover {
+  border-color: var(--green);
+  background: var(--card-active);
 }
 
 .stage {

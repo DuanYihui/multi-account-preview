@@ -31,6 +31,7 @@ const envSettings = document.querySelector('#envSettings');
 const envSettingsForm = document.querySelector('#envSettingsForm');
 const envNameInput = document.querySelector('#envNameInput');
 const envPageRows = document.querySelector('#envPageRows');
+const addEnvPageButton = document.querySelector('#addEnvPage');
 const closeEnvSettings = document.querySelector('#closeEnvSettings');
 const cancelEnvSettings = document.querySelector('#cancelEnvSettings');
 const deleteEnvButton = document.querySelector('#deleteEnv');
@@ -483,6 +484,7 @@ envSettings.addEventListener('mousedown', (event) => {
   if (event.target === envSettings) closeEnvironmentSettings();
 });
 envSettingsForm.addEventListener('submit', saveEnvironmentSettings);
+addEnvPageButton.addEventListener('click', () => addEnvironmentPageRow());
 deleteEnvButton.addEventListener('click', deleteCurrentEnvironment);
 themeToggle.addEventListener('click', () => {
   theme = theme === 'dark' ? 'light' : 'dark';
@@ -514,21 +516,9 @@ async function openEnvSettings() {
   envNameInput.value = selectedEnv.env;
   envPageRows.innerHTML = selectedAccount.pages
     .filter((page) => !page.popup)
-    .map((page) => {
-      const mobile = isMobilePage(page);
-      return `
-      <div class="env-page-row ${mobile ? 'is-mobile' : ''}" data-original-page="${escapeHtml(page.page)}">
-        <input class="env-page-name" value="${escapeHtml(page.page)}" aria-label="窗口名称">
-        <input class="env-page-url" value="${escapeHtml(page.url)}" aria-label="窗口地址">
-        <label title="启用移动设备模拟">
-          <input class="env-page-mobile" type="checkbox" ${page.mobileEmulation ? 'checked' : ''} aria-label="移动设备模拟">
-        </label>
-        <label title="启用窗口">
-          <input class="env-page-enabled" type="checkbox" ${page.enabled ? 'checked' : ''} aria-label="启用窗口">
-        </label>
-      </div>
-    `;
-    }).join('');
+    .map((page) => renderEnvironmentPageRow(page))
+    .join('');
+  bindEnvironmentPageRows();
   try {
     await window.accountPreviewShell.setSettingsOpen(true);
   } catch (_error) {
@@ -539,6 +529,62 @@ async function openEnvSettings() {
     envNameInput.focus();
     envNameInput.select();
   });
+}
+
+function renderEnvironmentPageRow(page = {}) {
+  const mobile = Boolean(page.mobileEmulation);
+  return `
+    <div class="env-page-row ${mobile ? 'is-mobile' : ''}" data-original-page="${escapeHtml(page.originalPage ?? page.page ?? '')}">
+      <input class="env-page-name" value="${escapeHtml(page.page || '')}" aria-label="窗口名称" placeholder="窗口名称">
+      <input class="env-page-url" value="${escapeHtml(page.url || '')}" aria-label="窗口地址" placeholder="https://example.com/path">
+      <label title="启用移动设备模拟">
+        <input class="env-page-mobile" type="checkbox" ${mobile ? 'checked' : ''} aria-label="移动设备模拟">
+      </label>
+      <label title="启用窗口">
+        <input class="env-page-enabled" type="checkbox" ${page.enabled === false ? '' : 'checked'} aria-label="启用窗口">
+      </label>
+      <button type="button" class="env-page-delete" title="删除窗口">×</button>
+    </div>
+  `;
+}
+
+function bindEnvironmentPageRows() {
+  envPageRows.querySelectorAll('.env-page-delete').forEach((button) => {
+    if (button.dataset.bound) return;
+    button.dataset.bound = 'true';
+    button.addEventListener('click', () => {
+      if (envPageRows.querySelectorAll('.env-page-row').length <= 1) {
+        alert('环境至少需要保留 1 个窗口');
+        return;
+      }
+      button.closest('.env-page-row')?.remove();
+    });
+  });
+  envPageRows.querySelectorAll('.env-page-mobile').forEach((input) => {
+    if (input.dataset.bound) return;
+    input.dataset.bound = 'true';
+    input.addEventListener('change', () => {
+      input.closest('.env-page-row')?.classList.toggle('is-mobile', input.checked);
+    });
+  });
+}
+
+function addEnvironmentPageRow() {
+  const names = new Set(Array.from(envPageRows.querySelectorAll('.env-page-name'))
+    .map((input) => input.value.trim())
+    .filter(Boolean));
+  let index = names.size + 1;
+  while (names.has(`窗口${index}`)) index += 1;
+  envPageRows.insertAdjacentHTML('beforeend', renderEnvironmentPageRow({
+    originalPage: '',
+    page: `窗口${index}`,
+    url: '',
+    enabled: true,
+    mobileEmulation: false
+  }));
+  bindEnvironmentPageRows();
+  const lastRow = envPageRows.querySelector('.env-page-row:last-child');
+  lastRow?.querySelector('.env-page-name')?.focus();
 }
 
 function closeEnvironmentSettings() {
